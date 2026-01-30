@@ -1,6 +1,10 @@
+using System.Collections;
 using System.Dynamic;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CharacterController : MonoBehaviour
 {
@@ -30,6 +34,8 @@ public class CharacterController : MonoBehaviour
     /// </summary>
     private InputAction m_jump;
 
+    private InputAction m_interact;
+
     /// <summary>
     /// The currently selectedMask
     /// </summary>
@@ -45,12 +51,24 @@ public class CharacterController : MonoBehaviour
     /// </summary>
     [SerializeField] private float m_moveSpeed;
 
+    /// <summary>
+    /// Current Active Camera in the scene
+    /// </summary>
+    [SerializeField] private Camera m_MainCamera;
+
+    /// <summary>
+    /// provides a layer mask for what player's grapple acctual is able to hit (specific layers)
+    /// </summary>
+    [SerializeField] private LayerMask m_grappleLayerMask;
+
+    private float CR_Timer;
 
     void Awake()
     {
         m_move = InputSystem.actions.FindAction("Move");
         m_jump = InputSystem.actions.FindAction("Jump");
-        
+        this.GetComponent<Rigidbody2D>().freezeRotation = true;
+
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -69,6 +87,7 @@ public class CharacterController : MonoBehaviour
     {
         //adds the move to position
         transform.position += new Vector3(m_playerDirection.x * m_moveSpeed, m_playerDirection.y * m_moveSpeed, 0);
+
     }
 
     /// <header> Charecter Inputs </header>
@@ -87,7 +106,6 @@ public class CharacterController : MonoBehaviour
         {
             m_playerDirection = Vector2.zero;
         }
-       
     }
 
     /// <summary>
@@ -116,5 +134,40 @@ public class CharacterController : MonoBehaviour
         m_maskState = MaskState.wallTangibility;
         Debug.Log("wall");
     }
+
+    /// <summary>
+    /// when grapple pressed, grapples appropriately
+    /// </summary>
+    /// <param name="ctx"></param>
+    public void GrappleInput(InputAction.CallbackContext ctx)
+    {
+        Grapple();
+    }
+
+    IEnumerable CR_KeepGrappling(RaycastHit2D grappleHit)
+    {
+        while (CR_Timer < 5f)
+        {
+            if (grappleHit && m_maskState == MaskState.grapple)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, grappleHit.point, 0.1f);
+            }
+            CR_Timer += Time.deltaTime;
+        }
+        CR_Timer = 0;
+        yield return null;
+    }
+    
+
+    private void Grapple()
+    {
+        //takes the current mouse position from the current player position compared to the camera
+        Vector2 grappleDirection = m_MainCamera.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y,0)) - this.transform.position ;
+        Debug.DrawRay(this.transform.position, grappleDirection, Color.red, 10);
+        //casts the acctual ray to whereever the mosue is on screen, ignores the player to stop bugs
+        RaycastHit2D grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
+        StartCoroutine(CR_KeepGrappling(grappleHit));
+    }
+
 
 }
