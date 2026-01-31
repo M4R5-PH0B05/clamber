@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
@@ -103,7 +104,7 @@ public class CharacterController : MonoBehaviour
     /// set true/false when climbing is true
     /// </summary>
     private bool isclimbing = false;
-    
+    private float m_currentVelY;
    
    
 
@@ -168,6 +169,9 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        m_playerAnimation.SetFloat("VelocityY", m_playerRB2D.linearVelocityY);
+        
+
         //adds the move to position
         transform.position += new Vector3(m_playerDirection.x * m_moveSpeed, m_playerDirection.y * m_moveSpeed, 0);
         //Grapples to appropriate position while player grappling is true
@@ -175,10 +179,7 @@ public class CharacterController : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, grappleController.m_grappleHit.point, 15f * Time.deltaTime);
         }
-        if (m_playerDirection.y < 0)
-        {
-            m_playerAnimation.SetBool("Falling", true);
-        }
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -224,7 +225,8 @@ public class CharacterController : MonoBehaviour
             m_playerAnimation.SetBool("Idle", false);
             m_playerDirection = ctx.ReadValue<Vector2>();
 
-            m_playerAnimation.SetFloat("Speed", Mathf.Abs(m_playerDirection.x));
+            
+            
             if (m_playerDirection.x < 0)//rotate character sprite depending which way they are moving
             {
                 this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
@@ -240,8 +242,8 @@ public class CharacterController : MonoBehaviour
         {
             m_playerDirection = Vector2.zero;
             //Animation
-            m_playerAnimation.SetFloat("Speed", 0);
             m_playerAnimation.SetBool("Idle", true);
+            
 
         }
      
@@ -269,11 +271,12 @@ public class CharacterController : MonoBehaviour
     {
         if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1)
         {
-            m_playerAnimation.SetTrigger("Jump");
+           
+            
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
+            m_playerAnimation.SetBool("Jumping", true);
             if (Physics2D.Raycast(this.transform.position, Vector2.down, 0.1f, m_layerMask))//if the player is on the ground reset jump counter
             {
-                m_playerAnimation.SetBool("Grounded", true);
                 return;
             }
             else
@@ -310,9 +313,9 @@ public class CharacterController : MonoBehaviour
         {
             if (contact.normal.y > 0)//if the player collides with the ground from above resets jumps appropriately
             {
-                m_playerAnimation.SetBool("Falling", false);
-                m_playerAnimation.SetBool("Grounded", true);
-                m_playerAnimation.ResetTrigger("Jump");
+              
+                m_playerAnimation.SetBool("Jumping", false);
+
                 if (m_maskState == MaskState.doubleJump)
                 {
                     m_jumpCounter = 2;
