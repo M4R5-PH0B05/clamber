@@ -68,6 +68,7 @@ public class CustomSceneManagerScript : MonoBehaviour
         // Check music is playing
         if (music != null)
         {
+            Debug.Log("Fading");
             // Fade it out 
             music.FadeOut();
             // Wait before loading new scene 
