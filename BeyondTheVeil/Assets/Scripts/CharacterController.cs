@@ -230,6 +230,7 @@ public class CharacterController : MonoBehaviour
             m_currentJumpCooldown += Time.deltaTime;
             yield return null;
         }
+        m_playerRB2D.totalForce = new Vector2(0, 0);
         m_playerRB2D.AddForce(new Vector2(0, 1f * m_jumpSpeed), ForceMode2D.Impulse);
         m_currentJumpCooldown = 0;
         Cr_HandleJumpInstance = null;
