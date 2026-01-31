@@ -18,7 +18,8 @@ public class CharacterController : MonoBehaviour
         none = 0,
         doubleJump = 1,
         grapple = 2,
-        wallTangibility = 3
+        wallTangibility = 3,
+        climbingmask = 4,
     }
 
     /// <summary>
@@ -98,6 +99,12 @@ public class CharacterController : MonoBehaviour
     private bool grappleMaskEquipped = false;
     private bool wallTangibilityMaskEquipped = false;
     private bool doubleJumpMaskEquipped = false;
+    /// <summary>
+    /// set true/false when climbing is true
+    /// </summary>
+    private bool isclimbing = false;
+    
+   
    
 
     [SerializeField] private Camera m_MainCamera;
@@ -163,7 +170,9 @@ public class CharacterController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         HandleMaskPickups(collision);
+        
     }
+   
 
     /// <summary>
     /// On collision with an object if it is a mask stores and quips the appropriate mask
@@ -195,7 +204,7 @@ public class CharacterController : MonoBehaviour
     public void HandleMove(InputAction.CallbackContext ctx)
     {
         // makes it so player cant jump with W key
-        if (ctx.performed && ctx.ReadValue<Vector2>().y <= 0)
+        if (ctx.performed && ctx.ReadValue<Vector2>().y <= 0 )
         {
             m_playerDirection = ctx.ReadValue<Vector2>();
             if (m_playerDirection.x < 0)//rotate character sprite depending which way they are moving
@@ -207,10 +216,27 @@ public class CharacterController : MonoBehaviour
                 this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
             }
         }
+        
         else if (ctx.canceled)
         {
             m_playerDirection = Vector2.zero;
         }
+    }
+    public void HandleClimbing(InputAction.CallbackContext ctx)
+    {
+        if (m_maskState == MaskState.climbingmask && !ctx.canceled && isclimbing == true)
+        {
+            Debug.Log("Triggered");
+            Debug.Log(m_playerDirection.y);
+            m_playerDirection.y = m_playerDirection.y + (850f * Time.deltaTime);
+        }
+   
+        else if (ctx.canceled)
+        {
+            m_playerDirection.y = 0;
+        }
+        
+        
     }
 
     /// <summary>
@@ -269,7 +295,23 @@ public class CharacterController : MonoBehaviour
                 }
             }
         }
+        if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
+        {
+            Debug.Log("Climbing");
+            isclimbing = true;
 
+        }
+
+
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "climbable")
+        {
+            Debug.Log("not clibming");
+            isclimbing = false;
+            m_playerDirection.y = m_playerDirection.y / 2;
+        }
     }
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
@@ -291,6 +333,14 @@ public class CharacterController : MonoBehaviour
             m_maskState = MaskState.wallTangibility;
             grappleController.m_maskState = MaskState.wallTangibility;
             m_enableDisappearingTiles.Invoke();
+    }
+    public void HandleMaskClimbing(InputAction.CallbackContext ctx)
+    {
+        m_maskState = MaskState.climbingmask;
+        Debug.Log("climbing");
+        grappleController.m_maskState = MaskState.climbingmask;
+        m_enableDisappearingTiles.Invoke();
+        
     }
 
     /// <summary>
