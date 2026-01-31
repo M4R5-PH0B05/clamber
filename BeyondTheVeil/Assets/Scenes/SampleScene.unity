@@ -459,6 +459,7 @@ MonoBehaviour:
   m_jumpSpeed: 0.5
   m_moveSpeed: 0.5
   grappleController: {fileID: 1636861884}
+  m_jumpCounter: 1
   m_MainCamera: {fileID: 519420031}
 --- !u!50 &196928987
 Rigidbody2D:
