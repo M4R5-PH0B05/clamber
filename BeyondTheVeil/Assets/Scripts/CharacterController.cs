@@ -12,7 +12,7 @@ public class CharacterController : MonoBehaviour
     /// <summary>
     /// This defines the player mask state
     /// </summary>
-    private enum MaskState  
+    private enum MaskState
     {
         none = 0,
         doubleJump = 1,
@@ -54,7 +54,7 @@ public class CharacterController : MonoBehaviour
     /// Defined for the velocity player jumps 
     /// </summary>
     [SerializeField] private float m_jumpSpeed;
-   
+
     /// <summary>
     /// Defined for the velocity player moves 
     /// </summary>
@@ -81,16 +81,23 @@ public class CharacterController : MonoBehaviour
     private bool m_grappling = false;
 
     private RaycastHit2D m_grappleHit;
-
+    /// <summary>
+    /// jump counter, for when double jump mask is equipped it increases.
+    /// </summary>
     private int m_jumpcounter = 1;
-
+    /// <summary>
+    /// bools for if each mask has been collected.
+    /// </summary>
+    private bool grapplemaskequipped = false;
+    private bool walltangibilitymaskequipped = false;
+    private bool doublejumpmaskequipped = false;
     [SerializeField] private LayerMask m_grappleLayerMask;
 
     [SerializeField] private Camera m_MainCamera;
 
     void Awake()
     {
-        
+
         m_move = InputSystem.actions.FindAction("Move");
         m_jump = InputSystem.actions.FindAction("Jump");
         RB2D = gameObject.GetComponent<Rigidbody2D>();
@@ -118,16 +125,16 @@ public class CharacterController : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, m_grappleHit.point, 15f * Time.deltaTime);
         }
-        
-        
-            
-            //takes the current mouse position from the current player position compared to the camera
-            Vector2 grappleDirection = m_MainCamera.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y, 0)) - this.transform.position;
-            Debug.DrawRay(this.transform.position, grappleDirection, Color.red, 10);
-            //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
-            m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
-           
-        
+
+
+
+        //takes the current mouse position from the current player position compared to the camera
+        Vector2 grappleDirection = m_MainCamera.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y, 0)) - this.transform.position;
+        Debug.DrawRay(this.transform.position, grappleDirection, Color.red, 10);
+        //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
+        m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
+
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -136,6 +143,25 @@ public class CharacterController : MonoBehaviour
         {
             m_grappling = false;
             m_grappleHit = new RaycastHit2D();
+        }
+       
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "doublejumpmask")
+        {
+            doublejumpmaskequipped = true;
+            Destroy(collision.gameObject);
+        }
+        if (collision.gameObject.tag == "walltangibilitymask")
+        {
+            walltangibilitymaskequipped = true;
+            Destroy(collision.gameObject);
+        }
+        if (collision.gameObject.tag == "grapplemask")
+        {
+            grapplemaskequipped = true;
+            Destroy(collision.gameObject);
         }
     }
 
@@ -148,7 +174,7 @@ public class CharacterController : MonoBehaviour
         // makes it so player cant jump with W key
         if (ctx.performed && ctx.ReadValue<Vector2>().y <= 0)
         {
-                m_playerDirection = ctx.ReadValue<Vector2>();
+            m_playerDirection = ctx.ReadValue<Vector2>();
         }
         else if (ctx.canceled)
         {
@@ -183,7 +209,7 @@ public class CharacterController : MonoBehaviour
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && doublejumpmaskequipped == true)
         {
             m_maskState = MaskState.doubleJump;
             Debug.Log("double jump");
@@ -193,8 +219,9 @@ public class CharacterController : MonoBehaviour
 
     public void HandleMaskSwitchGrapple(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && grapplemaskequipped == true)
         {
+
             m_maskState = MaskState.grapple;
             Debug.Log("grapple");
             m_disableDisappearingTiles.Invoke();
@@ -203,7 +230,7 @@ public class CharacterController : MonoBehaviour
 
     public void HandleMaskSwitchWall(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && walltangibilitymaskequipped == true)
         {
             m_maskState = MaskState.wallTangibility;
             Debug.Log("wall");
@@ -213,11 +240,11 @@ public class CharacterController : MonoBehaviour
 
     public void HandleInteract(InputAction.CallbackContext ctx)
     {
-        if(ctx.started)
+        if (ctx.started)
         {
             if (m_maskState == MaskState.wallTangibility)
             {
-                m_toggleDisappearingTiles.Invoke(); 
+                m_toggleDisappearingTiles.Invoke();
                 Debug.Log("m_maskstate");
             }
             if (m_maskState == MaskState.grapple)
@@ -227,7 +254,9 @@ public class CharacterController : MonoBehaviour
         }
     }
 
-   
-   
+    
+
+
+
 
 }
