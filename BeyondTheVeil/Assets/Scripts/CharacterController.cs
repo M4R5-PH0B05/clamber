@@ -238,7 +238,6 @@ public class CharacterController : MonoBehaviour
         
         else if (ctx.canceled)
         {
-            Debug.Log("Move Canceled");
             m_playerDirection = Vector2.zero;
             //Animation
             m_playerAnimation.SetFloat("Speed", 0);
@@ -251,8 +250,6 @@ public class CharacterController : MonoBehaviour
     {
         if (m_maskState == MaskState.climbingmask && !ctx.canceled && isclimbing == true)
         {
-            Debug.Log("Triggered");
-            Debug.Log(m_playerDirection.y);
             m_playerDirection.y = m_playerDirection.y + (850f * Time.deltaTime);
         }
    
@@ -328,7 +325,6 @@ public class CharacterController : MonoBehaviour
         }
         if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
         {
-            Debug.Log("Climbing");
             isclimbing = true;
 
         }
@@ -339,7 +335,6 @@ public class CharacterController : MonoBehaviour
     {
         if (collision.gameObject.tag == "climbable")
         {
-            Debug.Log("not clibming");
             isclimbing = false;
             m_playerDirection.y = m_playerDirection.y / 2;
         }
@@ -368,7 +363,6 @@ public class CharacterController : MonoBehaviour
     public void HandleMaskClimbing(InputAction.CallbackContext ctx)
     {
         m_maskState = MaskState.climbingmask;
-        Debug.Log("climbing");
         grappleController.m_maskState = MaskState.climbingmask;
         m_enableDisappearingTiles.Invoke();
         
