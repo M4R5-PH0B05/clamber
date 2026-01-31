@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: -1927196411598199882}
   - component: {fileID: -8316429151587184693}
   m_Layer: 0
-  m_Name: doublejumpmask
-  m_TagString: doublejumpmask
+  m_Name: doubleJumpMask
+  m_TagString: doubleJumpMask
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

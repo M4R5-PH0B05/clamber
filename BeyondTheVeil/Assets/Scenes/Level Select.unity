@@ -218,7 +218,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.21133333}
+  m_Offset: {x: 0, y: -0.0046448708}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.28866667}
@@ -504,6 +504,7 @@ MonoBehaviour:
   m_jumpSpeed: 5
   m_moveSpeed: 0.1
   grappleController: {fileID: 0}
+  m_jumpCounter: 1
   m_MainCamera: {fileID: 519420031}
 --- !u!50 &196928987
 Rigidbody2D:

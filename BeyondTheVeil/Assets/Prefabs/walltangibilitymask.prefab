@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: -7130865722805918536}
   - component: {fileID: -8646653938900984086}
   m_Layer: 0
-  m_Name: walltangibilitymask
-  m_TagString: walltangibilitymask
+  m_Name: wallTangibilityMask
+  m_TagString: wallTangibilityMask
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -84,7 +84,7 @@ public class CharacterController : MonoBehaviour
     /// <summary>
     /// jump counter, for when double jump mask is equipped it increases.
     /// </summary>
-    private int m_jumpCounter = 1;
+    [SerializeField] private int m_jumpCounter = 1;
 
     private float m_jumpCooldownTime = 0.2f;
 
@@ -211,14 +211,15 @@ public class CharacterController : MonoBehaviour
     /// <param name="ctx"></param>
     public void StartHandleJump(InputAction.CallbackContext ctx)
     {
-        if (Cr_HandleJumpInstance == null && m_jumpCounter > 0)
+        if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1)
         {
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
+            m_jumpCounter--;
         }
     }
 
     /// <summary>
-    /// Handles Jump cooldowns and jumps player whether on ground or midair when called
+    /// Handles Jump cooldowns and jumps player whether on ground or midair when called 
     /// </summary>
     /// <param name="ctx"></param>
     /// <returns></returns>
@@ -230,12 +231,11 @@ public class CharacterController : MonoBehaviour
             yield return null;
         }
         m_playerRB2D.AddForce(new Vector2(0, 1f * m_jumpSpeed), ForceMode2D.Impulse);
-        m_jumpCounter--;
         m_currentJumpCooldown = 0;
         Cr_HandleJumpInstance = null;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.contacts[0].normal.y > 0)//if the player collides with the ground from above resets jumps appropriately
         {

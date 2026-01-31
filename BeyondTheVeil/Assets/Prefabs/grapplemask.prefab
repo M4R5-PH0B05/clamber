@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 3726561384495966133}
   - component: {fileID: 2695675635081324423}
   m_Layer: 0
-  m_Name: grapplemask
-  m_TagString: grapplemask
+  m_Name: grappleMask
+  m_TagString: grappleMask
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
