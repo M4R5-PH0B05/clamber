@@ -5,9 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - DisappearingTile
-  - doublejumpmask
-  - grapplemask
-  - walltangibilitymask
+  - wallTangibilityMask
+  - doubleJumpMask
+  - grappleMask
   layers:
   - Default
   - TransparentFX

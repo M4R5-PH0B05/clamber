@@ -20,13 +20,15 @@ public class CustomSceneManagerScript : MonoBehaviour
         CheckIfPlayerShouldBeActive();
     }
 
+    /// <summary>
+    /// Based on scene name enables or disables main player instance at the start of the scene
+    /// </summary>
     void CheckIfPlayerShouldBeActive()
     {
         m_sceneName = SceneManager.GetActiveScene().name;
         if (m_sceneName == "Level Select")
         {
             m_player.SetActive(false);
-            Debug.Log("false");
         }
         else
         {
@@ -34,16 +36,30 @@ public class CustomSceneManagerScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called from other scripts to start the coroutine responsible for loading scenes 
+    /// </summary>
+    /// <param name="sceneName"></param>
+    /// <param name="spawnPosition"></param>
     public void StartSwapSceneCoroutine(string sceneName, Vector3 spawnPosition)//public function to call when loading a scene from another script
     {
         StartCoroutine(CR_LoadScene(sceneName, spawnPosition));
     }
 
+    /// <summary>
+    /// Loads specificially Level 1 from a button 
+    /// </summary>
     public void LoadLevel1()
     { 
         StartCoroutine(CR_LoadScene("Level 1", m_level1SpawnPosition));
     }
 
+    /// <summary>
+    /// Async loads given scene while performing other functions during scene loading
+    /// </summary>
+    /// <param name="sceneName"></param>
+    /// <param name="spawnPosition"></param>
+    /// <returns></returns>
     IEnumerator CR_LoadScene(string sceneName, Vector3 spawnPosition)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);

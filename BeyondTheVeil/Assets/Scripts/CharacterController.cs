@@ -2,10 +2,11 @@ using System.Collections;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Events;
 using UnityEditor.Rendering;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using static CharacterController;
 
 public class CharacterController : MonoBehaviour
 {
@@ -38,7 +39,7 @@ public class CharacterController : MonoBehaviour
     /// <summary>
     /// The Players Rigidbody2D
     /// </summary>
-    private Rigidbody2D RB2D;
+    private Rigidbody2D m_playerRB2D;
 
     /// <summary>
     /// Interact action
@@ -49,10 +50,6 @@ public class CharacterController : MonoBehaviour
     /// The currently selectedMask
     /// </summary>
     private MaskState m_maskState;
-
-  
-    private float m_jumpcooldown = 0.1f;
-    private float m_jumpTimeout;
 
     /// <summary>
     /// Defined for the velocity player jumps 
@@ -88,6 +85,13 @@ public class CharacterController : MonoBehaviour
     /// jump counter, for when double jump mask is equipped it increases.
     /// </summary>
     private int m_jumpCounter = 1;
+
+    private float m_jumpCooldownTime = 0.2f;
+
+    private float m_currentJumpCooldown = 0;
+
+    private Coroutine Cr_HandleJumpInstance;
+
     /// <summary>
     /// bools for if each mask has been collected.
     /// </summary>
@@ -105,13 +109,37 @@ public class CharacterController : MonoBehaviour
         m_move = InputSystem.actions.FindAction("Move");
         m_jump = InputSystem.actions.FindAction("Jump");
         //getting references to gameobjects
-        RB2D = gameObject.GetComponent<Rigidbody2D>();
-        m_disappearingTileManager = FindObjectOfType<DisappearingTileManager>();
+        m_playerRB2D = gameObject.GetComponent<Rigidbody2D>();
+        InitialiseManagerAndControllerReferences();
+        //stopping character and children rotating unnessacerily 
         gameObject.GetComponent<Rigidbody2D>().freezeRotation = true;
+    }
+
+    /// <summary>
+    /// initialises controller references within this script instance based on objects in scene
+    /// </summary>
+    void InitialiseManagerAndControllerReferences()
+    {
+        if (GameObject.Find("DisappearingTileManager"))//sets dissappearing tile manager if this is a valid object
+        {
+            m_disappearingTileManager = GameObject.Find("DisappearingTileManager").GetComponent<DisappearingTileManager>();
+        }
+        if (GameObject.Find("Grapple"))//sets dissappearing tile manager if this is a valid object
+        {
+            grappleController = GameObject.Find("Grapple").GetComponent<GrappleController>();
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
+    {
+        InitialiseDisappearingTileEvents();
+    }
+
+    /// <summary>
+    /// initialises nessecary event for the dissappearing tiles and thier manager
+    /// </summary>
+    private void InitialiseDisappearingTileEvents()
     {
         m_toggleDisappearingTiles = new UnityEvent();
         m_toggleDisappearingTiles.AddListener(() => m_disappearingTileManager.ToggleDisappearingTiles());
@@ -125,28 +153,37 @@ public class CharacterController : MonoBehaviour
     {
         //adds the move to position
         transform.position += new Vector3(m_playerDirection.x * m_moveSpeed, m_playerDirection.y * m_moveSpeed, 0);
+        //Grapples to appropriate position while player grappling is true
         if (grappleController.m_grappling == true)
         {
             transform.position = Vector2.MoveTowards(transform.position, grappleController.m_grappleHit.point, 15f * Time.deltaTime);
         }
     }
 
-    
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "doublejumpmask")
+        HandleMaskPickups(collision);
+    }
+
+    /// <summary>
+    /// On collision with an object if it is a mask stores and quips the appropriate mask
+    /// </summary>
+    /// <param name="collision"></param>
+    private void HandleMaskPickups(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "doubleJumpMask")
         {
-            doubleJumpMaskEquipped = true;
+            m_maskState = MaskState.doubleJump;
             Destroy(collision.gameObject);
         }
-        if (collision.gameObject.tag == "walltangibilitymask")
+        if (collision.gameObject.tag == "wallTangibilityMask")
         {
-            wallTangibilityMaskEquipped = true;
+            m_maskState = MaskState.wallTangibility;
             Destroy(collision.gameObject);
         }
-        if (collision.gameObject.tag == "grapplemask")
+        if (collision.gameObject.tag == "grappleMask")
         {
-            grappleMaskEquipped = true;
+            m_maskState = MaskState.grapple;
             Destroy(collision.gameObject);
         }
     }
@@ -169,12 +206,38 @@ public class CharacterController : MonoBehaviour
     }
 
     /// <summary>
-    /// This defines how the player jumps
+    /// This calls the coroutine that handles how the player jumps
     /// </summary>
     /// <param name="ctx"></param>
-    public void HandleJump(InputAction.CallbackContext ctx)
+    public void StartHandleJump(InputAction.CallbackContext ctx)
     {
-        if (RB2D.linearVelocityY < 0.001 && RB2D.linearVelocityY > -0.001)
+        if (Cr_HandleJumpInstance == null && m_jumpCounter > 0)
+        {
+            Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
+        }
+    }
+
+    /// <summary>
+    /// Handles Jump cooldowns and jumps player whether on ground or midair when called
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <returns></returns>
+    IEnumerator CR_HandleJump(InputAction.CallbackContext ctx)
+    {
+        while (m_currentJumpCooldown < m_jumpCooldownTime)
+        {
+            m_currentJumpCooldown += Time.deltaTime;
+            yield return null;
+        }
+        m_playerRB2D.AddForce(new Vector2(0, 1f * m_jumpSpeed), ForceMode2D.Impulse);
+        m_jumpCounter--;
+        m_currentJumpCooldown = 0;
+        Cr_HandleJumpInstance = null;
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.contacts[0].normal.y > 0)//if the player collides with the ground from above resets jumps appropriately
         {
             if (m_maskState == MaskState.doubleJump)
             {
@@ -185,62 +248,45 @@ public class CharacterController : MonoBehaviour
                 m_jumpCounter = 1;
             }
         }
-        if (m_jumpCounter > 0 && Time.time > m_jumpTimeout)
-        {
-            m_jumpCounter--;
-            RB2D.AddForce(new Vector2(0, 15 * m_jumpSpeed), ForceMode2D.Impulse);
-            m_jumpTimeout = Time.time + m_jumpcooldown;
-        }
     }
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && doubleJumpMaskEquipped == true)
-        {
             m_maskState = MaskState.doubleJump;
             grappleController.m_maskState = MaskState.doubleJump;
-            Debug.Log("double jump");
-            m_disableDisappearingTiles.Invoke();
-        }
     }
 
     public void HandleMaskSwitchGrapple(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && grappleMaskEquipped == true)
-        {
-
             m_maskState = MaskState.grapple;
             grappleController.m_maskState = MaskState.grapple;
-            Debug.Log("grapple");
-            m_disableDisappearingTiles.Invoke();
-        }
     }
 
     public void HandleMaskSwitchWall(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && wallTangibilityMaskEquipped == true)
-        {
             m_maskState = MaskState.wallTangibility;
             grappleController.m_maskState = MaskState.wallTangibility;
-            Debug.Log("wall");
-            m_enableDisappearingTiles.Invoke();
-        }
     }
 
+    /// <summary>
+    /// dependant on the mask selected handles what to do when interact key is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     public void HandleInteract(InputAction.CallbackContext ctx)
     {
-        if (ctx.started)
+        switch (m_maskState)
         {
-            if (m_maskState == MaskState.wallTangibility)
-            {
+            case MaskState.wallTangibility:
                 m_toggleDisappearingTiles.Invoke();
-                Debug.Log("m_maskstate");
-            }
-            if (m_maskState == MaskState.grapple)
-            {
+                break;
+
+            case MaskState.grapple:
                 grappleController.m_grappling = true;
                 grappleController.GrappleRayCast();
-            }
+                break;
+
+            default:
+                break;
         }
     }
 }

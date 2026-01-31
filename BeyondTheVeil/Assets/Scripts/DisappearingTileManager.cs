@@ -7,10 +7,14 @@ public class DisappearingTileManager : MonoBehaviour
 
     void Awake()
     {
+        //initialising disappearing tiles in the scene
         GameObject[] tileObjects = GameObject.FindGameObjectsWithTag("DisappearingTile");
         m_disappearingTiles = tileObjects.Select(obj => obj.GetComponent<DisappearingTile>()).ToArray();
     }
 
+    /// <summary>
+    /// Enables all dissappearing tile objects in the scene
+    /// </summary>
     public void EnableDisappearingTiles()
     {
         // Implementation to enable disappearing tiles
@@ -21,6 +25,9 @@ public class DisappearingTileManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// disables all dissappearing tile objects in the scene
+    /// </summary>
     public void DisableDisappearingTiles()
     {
         // Implementation to disable disappearing tiles
@@ -31,6 +38,9 @@ public class DisappearingTileManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles the state of all dissappearing tile objects to be enabled or disabled
+    /// </summary>
     public void ToggleDisappearingTiles()
     {
         // Implementation to toggle disappearing tiles

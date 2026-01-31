@@ -20,6 +20,7 @@ public class DisappearingTile : MonoBehaviour
     /// The sprite used when the tile is active
     /// </summary>
     [SerializeField] private Sprite activeSprite;
+
     /// <summary>
     /// The sprite used when this tile is inactive
     /// </summary>
@@ -29,6 +30,7 @@ public class DisappearingTile : MonoBehaviour
     /// The sprite renderer for this tile
     /// </summary>
     private SpriteRenderer m_spriteRenderer;
+
     /// <summary>
     /// The tile collider component
     /// </summary>
@@ -39,22 +41,9 @@ public class DisappearingTile : MonoBehaviour
         m_spriteRenderer = GetComponent<SpriteRenderer>();
         m_collider = GetComponent<BoxCollider2D>();
     }
-    
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     /// <summary>
-    /// Toggles if the tile is active or not
+    /// Toggles if this tile is active or not
     /// </summary>
     public void ToggleTileState()
     {
@@ -70,9 +59,9 @@ public class DisappearingTile : MonoBehaviour
         m_isTileActive = !m_isTileActive;
     }
 
-    //Enable or disable the tile, this will be called by an event
+    //Enable or disable this tile, this will be called by an event
     /// <summary>
-    /// Enables the tile
+    /// Enables this tile
     /// </summary>
     public void EnableTile()
     {
@@ -86,6 +75,7 @@ public class DisappearingTile : MonoBehaviour
         }
         m_enabled = true;
     }
+
     /// <summary>
     /// Disables the tile
     /// </summary>
@@ -96,12 +86,18 @@ public class DisappearingTile : MonoBehaviour
         m_spriteRenderer.sprite = null;
     }
 
+    /// <summary>
+    /// Enables this tile
+    /// </summary>
     private void ActivateTile()
     {
         m_collider.enabled = true;
         m_spriteRenderer.sprite = activeSprite;
     }
 
+    /// <summary>
+    /// Disables this tile
+    /// </summary>
     private void DeactivateTile()
     {
         m_collider.enabled = false;

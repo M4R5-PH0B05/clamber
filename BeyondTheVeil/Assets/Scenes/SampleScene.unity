@@ -674,7 +674,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7354118609415430534, guid: ba9ca230e5d96884a9d07ac9d0eea641, type: 3}
       propertyPath: m_Name
-      value: grapplemask
+      value: grappleMask
+      objectReference: {fileID: 0}
+    - target: {fileID: 7354118609415430534, guid: ba9ca230e5d96884a9d07ac9d0eea641, type: 3}
+      propertyPath: m_TagString
+      value: grappleMask
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -860,7 +864,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2999238975444332247, guid: 20b24d41718ef8b4f926e2e17a2b6b90, type: 3}
       propertyPath: m_Name
-      value: doublejumpmask
+      value: doubleJumpMask
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999238975444332247, guid: 20b24d41718ef8b4f926e2e17a2b6b90, type: 3}
+      propertyPath: m_TagString
+      value: doubleJumpMask
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -948,7 +956,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8033306873877080612, guid: a829e2a34910f76499d2fff1526bb37c, type: 3}
       propertyPath: m_Name
-      value: walltangibilitymask
+      value: wallTangibilityMask
+      objectReference: {fileID: 0}
+    - target: {fileID: 8033306873877080612, guid: a829e2a34910f76499d2fff1526bb37c, type: 3}
+      propertyPath: m_TagString
+      value: wallTangibilityMask
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1706,7 +1718,7 @@ GameObject:
   - component: {fileID: 1940399568}
   - component: {fileID: 1940399569}
   m_Layer: 0
-  m_Name: DisappearingTile Manager
+  m_Name: DisappearingTileManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
