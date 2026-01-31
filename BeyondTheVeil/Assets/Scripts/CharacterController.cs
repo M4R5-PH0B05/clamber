@@ -102,6 +102,8 @@ public class CharacterController : MonoBehaviour
 
     [SerializeField] private Camera m_MainCamera;
 
+    private LayerMask m_layerMask;
+
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -113,6 +115,8 @@ public class CharacterController : MonoBehaviour
         InitialiseManagerAndControllerReferences();
         //stopping character and children rotating unnessacerily 
         gameObject.GetComponent<Rigidbody2D>().freezeRotation = true;
+
+        m_layerMask = LayerMask.GetMask("Default");
     }
 
     /// <summary>
@@ -222,7 +226,7 @@ public class CharacterController : MonoBehaviour
         if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1)
         {
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
-            if (Physics2D.Raycast(this.transform.position, Vector2.down, 0.1f))//if the player is on the ground reset jump counter
+            if (Physics2D.Raycast(this.transform.position, Vector2.down, 0.1f, m_layerMask))//if the player is on the ground reset jump counter
             {
                 return;
             }
