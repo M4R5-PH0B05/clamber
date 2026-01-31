@@ -12,7 +12,7 @@ public class CharacterController : MonoBehaviour
     /// <summary>
     /// This defines the player mask state
     /// </summary>
-    private enum MaskState
+    public enum MaskState
     {
         none = 0,
         doubleJump = 1,
@@ -50,9 +50,9 @@ public class CharacterController : MonoBehaviour
     /// </summary>
     private MaskState m_maskState;
 
-    private bool m_canjump = false;
+  
     private float m_jumpcooldown = 0.1f;
-    private float m_jumptimeout;
+    private float m_jumpTimeout;
 
     /// <summary>
     /// Defined for the velocity player jumps 
@@ -82,20 +82,19 @@ public class CharacterController : MonoBehaviour
     /// </summary>
     private DisappearingTileManager m_disappearingTileManager;
 
-    private bool m_grappling = false;
+    [SerializeField] private GrappleController grappleController;
 
-    private RaycastHit2D m_grappleHit;
     /// <summary>
     /// jump counter, for when double jump mask is equipped it increases.
     /// </summary>
-    private int m_jumpcounter = 1;
+    private int m_jumpCounter = 1;
     /// <summary>
     /// bools for if each mask has been collected.
     /// </summary>
-    private bool grapplemaskequipped = false;
-    private bool walltangibilitymaskequipped = false;
-    private bool doublejumpmaskequipped = false;
-    [SerializeField] private LayerMask m_grappleLayerMask;
+    private bool grappleMaskEquipped = false;
+    private bool wallTangibilityMaskEquipped = false;
+    private bool doubleJumpMaskEquipped = false;
+   
 
     [SerializeField] private Camera m_MainCamera;
 
@@ -126,41 +125,28 @@ public class CharacterController : MonoBehaviour
     {
         //adds the move to position
         transform.position += new Vector3(m_playerDirection.x * m_moveSpeed, m_playerDirection.y * m_moveSpeed, 0);
-        if (m_grappling == true)
+        if (grappleController.m_grappling == true)
         {
-            transform.position = Vector2.MoveTowards(transform.position, m_grappleHit.point, 15f * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, grappleController.m_grappleHit.point, 15f * Time.deltaTime);
         }
-        //takes the current mouse position from the current player position compared to the camera
-        Vector2 grappleDirection = m_MainCamera.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y, 0)) - this.transform.position;
-        Debug.DrawRay(this.transform.position, grappleDirection, Color.red, 10);
-        //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
-        m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.name == "Barriers")//when player hit platform grapple retracts
-        {
-            m_grappling = false;
-            m_grappleHit = new RaycastHit2D();
-        }
-       
-    }
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "doublejumpmask")
         {
-            doublejumpmaskequipped = true;
+            doubleJumpMaskEquipped = true;
             Destroy(collision.gameObject);
         }
         if (collision.gameObject.tag == "walltangibilitymask")
         {
-            walltangibilitymaskequipped = true;
+            wallTangibilityMaskEquipped = true;
             Destroy(collision.gameObject);
         }
         if (collision.gameObject.tag == "grapplemask")
         {
-            grapplemaskequipped = true;
+            grappleMaskEquipped = true;
             Destroy(collision.gameObject);
         }
     }
@@ -192,26 +178,27 @@ public class CharacterController : MonoBehaviour
         {
             if (m_maskState == MaskState.doubleJump)
             {
-                m_jumpcounter = 2;
+                m_jumpCounter = 2;
             }
             else if (m_maskState != MaskState.doubleJump)
             {
-                m_jumpcounter = 1;
+                m_jumpCounter = 1;
             }
         }
-        if (m_jumpcounter > 0 && Time.time > m_jumptimeout)
+        if (m_jumpCounter > 0 && Time.time > m_jumpTimeout)
         {
-            m_jumpcounter--;
+            m_jumpCounter--;
             RB2D.AddForce(new Vector2(0, 15 * m_jumpSpeed), ForceMode2D.Impulse);
-            m_jumptimeout = Time.time + m_jumpcooldown;
+            m_jumpTimeout = Time.time + m_jumpcooldown;
         }
     }
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && doublejumpmaskequipped == true)
+        if (ctx.performed && doubleJumpMaskEquipped == true)
         {
             m_maskState = MaskState.doubleJump;
+            grappleController.m_maskState = MaskState.doubleJump;
             Debug.Log("double jump");
             m_disableDisappearingTiles.Invoke();
         }
@@ -219,10 +206,11 @@ public class CharacterController : MonoBehaviour
 
     public void HandleMaskSwitchGrapple(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && grapplemaskequipped == true)
+        if (ctx.performed && grappleMaskEquipped == true)
         {
 
             m_maskState = MaskState.grapple;
+            grappleController.m_maskState = MaskState.grapple;
             Debug.Log("grapple");
             m_disableDisappearingTiles.Invoke();
         }
@@ -230,9 +218,10 @@ public class CharacterController : MonoBehaviour
 
     public void HandleMaskSwitchWall(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && walltangibilitymaskequipped == true)
+        if (ctx.performed && wallTangibilityMaskEquipped == true)
         {
             m_maskState = MaskState.wallTangibility;
+            grappleController.m_maskState = MaskState.wallTangibility;
             Debug.Log("wall");
             m_enableDisappearingTiles.Invoke();
         }
@@ -249,14 +238,9 @@ public class CharacterController : MonoBehaviour
             }
             if (m_maskState == MaskState.grapple)
             {
-                m_grappling = true;
+                grappleController.m_grappling = true;
+                grappleController.GrappleRayCast();
             }
         }
     }
-
-    
-
-
-
-
 }
