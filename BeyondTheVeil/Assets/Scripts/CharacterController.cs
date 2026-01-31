@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using UnityEditor.Rendering;
 
 public class CharacterController : MonoBehaviour
 {
@@ -77,13 +78,24 @@ public class CharacterController : MonoBehaviour
     /// </summary>
     private DisappearingTileManager m_disappearingTileManager;
 
+    private bool m_grappling = false;
+
+    private RaycastHit2D m_grappleHit;
+
+    private int m_jumpcounter = 1;
+
+    [SerializeField] private LayerMask m_grappleLayerMask;
+
+    [SerializeField] private Camera m_MainCamera;
+
     void Awake()
     {
+        
         m_move = InputSystem.actions.FindAction("Move");
         m_jump = InputSystem.actions.FindAction("Jump");
-
+        RB2D = gameObject.GetComponent<Rigidbody2D>();
         m_disappearingTileManager = FindObjectOfType<DisappearingTileManager>();
-
+        gameObject.GetComponent<Rigidbody2D>().freezeRotation = true;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -98,12 +110,6 @@ public class CharacterController : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void FixedUpdate()
     {
         //adds the move to position
@@ -112,14 +118,16 @@ public class CharacterController : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, m_grappleHit.point, 15f * Time.deltaTime);
         }
-        else 
-        {
+        
+        
+            
             //takes the current mouse position from the current player position compared to the camera
             Vector2 grappleDirection = m_MainCamera.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y, 0)) - this.transform.position;
             Debug.DrawRay(this.transform.position, grappleDirection, Color.red, 10);
             //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
             m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
-        }
+           
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -140,9 +148,7 @@ public class CharacterController : MonoBehaviour
         // makes it so player cant jump with W key
         if (ctx.performed && ctx.ReadValue<Vector2>().y <= 0)
         {
-            
                 m_playerDirection = ctx.ReadValue<Vector2>();
-            
         }
         else if (ctx.canceled)
         {
@@ -156,7 +162,6 @@ public class CharacterController : MonoBehaviour
     /// <param name="ctx"></param>
     public void HandleJump(InputAction.CallbackContext ctx)
     {
-        
         if (RB2D.linearVelocityY < 0.001 && RB2D.linearVelocityY > -0.001)
         {
             if (m_maskState == MaskState.doubleJump)
@@ -173,11 +178,7 @@ public class CharacterController : MonoBehaviour
             m_jumpcounter--;
             RB2D.AddForce(new Vector2(0, 15 * m_jumpSpeed), ForceMode2D.Impulse);
             m_jumptimeout = Time.time + m_jumpcooldown;
-            
-
-            
         }
-          
     }
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
@@ -216,19 +217,17 @@ public class CharacterController : MonoBehaviour
         {
             if (m_maskState == MaskState.wallTangibility)
             {
-                m_toggleDisappearingTiles.Invoke();
+                m_toggleDisappearingTiles.Invoke(); 
+                Debug.Log("m_maskstate");
             }
-            Debug.Log("interact");
+            if (m_maskState == MaskState.grapple)
+            {
+                m_grappling = true;
+            }
         }
     }
 
-    /// <summary>
-    /// when grapple pressed, grapples appropriately
-    /// </summary>
-    /// <param name="ctx"></param>
-    public void GrappleInput(InputAction.CallbackContext ctx)
-    {
-        m_grappling = true;
-    }
+   
+   
 
 }
