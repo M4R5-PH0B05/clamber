@@ -198,6 +198,14 @@ public class CharacterController : MonoBehaviour
         if (ctx.performed && ctx.ReadValue<Vector2>().y <= 0)
         {
             m_playerDirection = ctx.ReadValue<Vector2>();
+            if (m_playerDirection.x < 0)//rotate character sprite depending which way they are moving
+            {
+                this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
+            }
+            else
+            { 
+                this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
+            }
         }
         else if (ctx.canceled)
         {
