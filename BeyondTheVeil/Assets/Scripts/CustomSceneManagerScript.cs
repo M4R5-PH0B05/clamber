@@ -16,17 +16,23 @@ public class CustomSceneManagerScript : MonoBehaviour
         m_player = GameObject.Find("Player");
         m_sceneName = SceneManager.GetActiveScene().name;
         //loads player into scene if player should be in scene
+        m_currentCamera = Camera.main;
+        CheckIfPlayerShouldBeActive();
+    }
+
+    void CheckIfPlayerShouldBeActive()
+    {
+        m_sceneName = SceneManager.GetActiveScene().name;
         if (m_sceneName == "Level Select")
         {
             m_player.SetActive(false);
+            Debug.Log("false");
         }
         else
         {
             m_player.SetActive(true);
         }
-        m_currentCamera = Camera.main;
     }
-
 
     public void StartSwapSceneCoroutine(string sceneName, Vector3 spawnPosition)//public function to call when loading a scene from another script
     {
@@ -43,9 +49,9 @@ public class CustomSceneManagerScript : MonoBehaviour
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncLoad.isDone)//doesnt finish loading scene until certain actions are done for smooth transitions
         {
-            ;
+            yield return null;
         }
         m_player.transform.position = spawnPosition;
-        yield return null;
+        CheckIfPlayerShouldBeActive();
     }
 }
