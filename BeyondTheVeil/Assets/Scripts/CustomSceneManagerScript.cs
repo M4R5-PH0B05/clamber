@@ -8,6 +8,7 @@ public class CustomSceneManagerScript : MonoBehaviour
     public string m_sceneName;
     public Camera m_currentCamera;
     public Vector3 m_level1SpawnPosition = new Vector3(0,0,0);
+    private Coroutine m_CR_LoadLevelRunning;
 
     private void Awake()
     {
@@ -43,15 +44,29 @@ public class CustomSceneManagerScript : MonoBehaviour
     /// <param name="spawnPosition"></param>
     public void StartSwapSceneCoroutine(string sceneName, Vector3 spawnPosition)//public function to call when loading a scene from another script
     {
-        StartCoroutine(CR_LoadScene(sceneName, spawnPosition));
+        if (m_CR_LoadLevelRunning == null)
+        {
+            m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene(sceneName, spawnPosition));
+        }
     }
 
     /// <summary>
     /// Loads specificially Level 1 from a button 
     /// </summary>
     public void LoadLevel1()
-    { 
-        StartCoroutine(CR_LoadScene("Level 1", m_level1SpawnPosition));
+    {
+        if (m_CR_LoadLevelRunning == null)
+        {
+            m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Level 1", m_level1SpawnPosition));
+        }
+    }
+
+    public void LoadLevel2()
+    {
+        if (m_CR_LoadLevelRunning == null)
+        {
+            m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Level 2", m_level1SpawnPosition));
+        }
     }
 
     /// <summary>
@@ -64,14 +79,14 @@ public class CustomSceneManagerScript : MonoBehaviour
     {
         // I added this, sorry if its shit - Morgan
         // Find the music 
-        SceneMusic music = FindObjectOfType<SceneMusic>();
+        SceneMusic titleMusic = GameObject.Find("TitleMusic").GetComponent<SceneMusic>(); 
         // Check music is playing
-        if (music != null)
+        if (titleMusic != null)
         {
             // Fade it out 
-            music.FadeOut();
+            titleMusic.FadeOut();
             // Wait before loading new scene 
-            yield return new WaitForSeconds(music.FadeOutTime);
+            yield return new WaitForSeconds(titleMusic.FadeOutTime);
         }
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncLoad.isDone)//doesnt finish loading scene until certain actions are done for smooth transitions
@@ -80,5 +95,6 @@ public class CustomSceneManagerScript : MonoBehaviour
         }
         m_player.transform.position = spawnPosition;
         CheckIfPlayerShouldBeActive();
+        m_CR_LoadLevelRunning = null;
     }
 }
