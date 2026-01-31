@@ -102,7 +102,12 @@ public class CharacterController : MonoBehaviour
 
     [SerializeField] private Camera m_MainCamera;
 
+    /// <summary>
+    /// The layer mask for the ground detection
+    /// </summary>
     private LayerMask m_layerMask;
+
+    private Animator m_playerAnimation;
 
     void Awake()
     {
@@ -117,6 +122,7 @@ public class CharacterController : MonoBehaviour
         gameObject.GetComponent<Rigidbody2D>().freezeRotation = true;
 
         m_layerMask = LayerMask.GetMask("Default");
+        m_playerAnimation = GetComponent<Animator>();
     }
 
     /// <summary>
@@ -162,6 +168,10 @@ public class CharacterController : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, grappleController.m_grappleHit.point, 15f * Time.deltaTime);
         }
+        if (m_playerDirection.y < 0)
+        {
+            m_playerAnimation.SetBool("Falling", true);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -201,7 +211,11 @@ public class CharacterController : MonoBehaviour
         // makes it so player cant jump with W key
         if (ctx.performed && ctx.ReadValue<Vector2>().y <= 0)
         {
+            //Animation
+            m_playerAnimation.SetBool("Idle", false);
             m_playerDirection = ctx.ReadValue<Vector2>();
+
+            m_playerAnimation.SetFloat("Speed", Mathf.Abs(m_playerDirection.x));
             if (m_playerDirection.x < 0)//rotate character sprite depending which way they are moving
             {
                 this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
@@ -210,11 +224,18 @@ public class CharacterController : MonoBehaviour
             { 
                 this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
             }
+
         }
         else if (ctx.canceled)
         {
+            Debug.Log("Move Canceled");
             m_playerDirection = Vector2.zero;
+            //Animation
+            m_playerAnimation.SetFloat("Speed", 0);
+            m_playerAnimation.SetBool("Idle", true);
+
         }
+     
     }
 
     /// <summary>
@@ -225,9 +246,11 @@ public class CharacterController : MonoBehaviour
     {
         if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1)
         {
+            m_playerAnimation.SetTrigger("Jump");
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
             if (Physics2D.Raycast(this.transform.position, Vector2.down, 0.1f, m_layerMask))//if the player is on the ground reset jump counter
             {
+                m_playerAnimation.SetBool("Grounded", true);
                 return;
             }
             else
@@ -245,6 +268,7 @@ public class CharacterController : MonoBehaviour
     /// <returns></returns>
     IEnumerator CR_HandleJump(InputAction.CallbackContext ctx)
     {
+        Coroutine CR_WaitForJumpAnimInstance = StartCoroutine(CR_WaitForJumpAmim());
         while (m_currentJumpCooldown < m_jumpCooldownTime)
         {
             m_currentJumpCooldown += Time.deltaTime;
@@ -263,6 +287,9 @@ public class CharacterController : MonoBehaviour
         {
             if (contact.normal.y > 0)//if the player collides with the ground from above resets jumps appropriately
             {
+                m_playerAnimation.SetBool("Falling", false);
+                m_playerAnimation.SetBool("Grounded", true);
+                m_playerAnimation.ResetTrigger("Jump");
                 if (m_maskState == MaskState.doubleJump)
                 {
                     m_jumpCounter = 2;
@@ -312,5 +339,10 @@ public class CharacterController : MonoBehaviour
             grappleController.m_grappling = true;
             grappleController.GrappleRayCast();
         }
+    }
+
+    IEnumerator CR_WaitForJumpAmim()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 }
