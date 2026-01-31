@@ -8,6 +8,7 @@ TagManager:
   - wallTangibilityMask
   - doubleJumpMask
   - grappleMask
+  - climbable
   layers:
   - Default
   - TransparentFX

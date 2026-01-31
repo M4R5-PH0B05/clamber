@@ -62,6 +62,17 @@ public class CustomSceneManagerScript : MonoBehaviour
     /// <returns></returns>
     IEnumerator CR_LoadScene(string sceneName, Vector3 spawnPosition)
     {
+        // I added this, sorry if its shit - Morgan
+        // Find the music 
+        SceneMusic music = FindObjectOfType<SceneMusic>();
+        // Check music is playing
+        if (music != null)
+        {
+            // Fade it out 
+            music.FadeOut();
+            // Wait before loading new scene 
+            yield return new WaitForSeconds(music.FadeOutTime);
+        }
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncLoad.isDone)//doesnt finish loading scene until certain actions are done for smooth transitions
         {
