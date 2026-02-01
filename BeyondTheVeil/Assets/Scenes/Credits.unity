@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewport: {fileID: 19869025}
-  speed: 500
+  speed: 100
   startPadding: 0
   endPadding: 50
 --- !u!1 &1303664935
@@ -602,7 +602,7 @@ MonoBehaviour:
     Bennett\n\nMost Unsucessfull Merges\nMorgan Bennett\n\nMost Branches Broken\nMorgan
     Bennett\n\nSTARRING...\n\nmorgan as morgan\nkota as kota \ndan as dan \nother
     dan as other dan \nrose as rose\ntom as tom \nmonke as monke \n\n\n!! NO ANIMALS
-    WERE HARMED IN THE MAKING OF THIS VIDEO GAME ( expect for the programmers lol
+    WERE HARMED IN THE MAKING OF THIS VIDEO GAME ( except for the programmers lol
     ) !!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
