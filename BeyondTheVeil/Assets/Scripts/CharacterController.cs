@@ -374,6 +374,12 @@ public class CharacterController : MonoBehaviour
         {
             m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 4", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level4SpawnPosition);
         }
+        else if (collision.gameObject.name == "Level4Exit")
+        {
+            Destroy(gameObject);
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Credits", new Vector3(0,0,0));
+            
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
