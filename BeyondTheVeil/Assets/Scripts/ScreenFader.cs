@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ScreenFader : MonoBehaviour
 {
-    public static ScreenFader m_Instance;
+    public static ScreenFader Instance;
 
     [SerializeField] private Image fadeImage;
     [SerializeField] private CanvasGroup canvasGroup;
@@ -12,12 +12,12 @@ public class ScreenFader : MonoBehaviour
 
     void Awake()
     {
-        if (m_Instance != null && m_Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(transform.root.gameObject);
             return;
         }
-        m_Instance = this;
+        Instance = this;
 
         DontDestroyOnLoad(transform.root.gameObject);
 

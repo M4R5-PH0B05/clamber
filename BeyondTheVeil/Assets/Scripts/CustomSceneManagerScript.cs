@@ -7,7 +7,10 @@ public class CustomSceneManagerScript : MonoBehaviour
     [SerializeField] private GameObject m_player;
     public string m_sceneName;
     public Camera m_currentCamera;
-    public Vector3 m_level1SpawnPosition = new Vector3(0, 0, 0);
+    public Vector3 m_level1SpawnPosition = new Vector3(0,0,0);
+    public Vector3 m_level2SpawnPosition = new Vector3(0,0,0);
+    public Vector3 m_level3SpawnPosition = new Vector3(0,0,0);
+    public Vector3 m_level4SpawnPosition = new Vector3(0,0,0);
     private Coroutine m_CR_LoadLevelRunning;
 
     private void Awake()
@@ -77,27 +80,26 @@ public class CustomSceneManagerScript : MonoBehaviour
     /// <returns></returns>
     IEnumerator CR_LoadScene(string sceneName, Vector3 spawnPosition)
     {
-        var titleMusicObj = GameObject.Find("TitleMusic");
-        SceneMusic titleMusic = titleMusicObj ? titleMusicObj.GetComponent<SceneMusic>() : null;
+        // I added this, sorry if its shit - Morgan
+        // Find the music 
 
-        if (ScreenFader.Instance != null)
-        {
-            // start music fade (if it exists) and fade to black
-            if (titleMusic != null)
-                titleMusic.FadeOut();
-
-            yield return ScreenFader.Instance.FadeTo(1f);
-
-            if (titleMusic != null)
-                yield return new WaitForSecondsRealtime(titleMusic.FadeOutTime);
+        if(GameObject.Find("TitleMusic") !=null )
+        { 
+            SceneMusic titleMusic = GameObject.Find("TitleMusic").GetComponent<SceneMusic>(); 
+            // Check music is playing
+            Debug.Log("Fading");
+            // Fade it out 
+            titleMusic.FadeOut();
+            // Wait before loading new scene 
+            yield return new WaitForSeconds(titleMusic.FadeOutTime);
         }
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncLoad.isDone)
             yield return null;
 
+        m_CR_LoadLevelRunning = null;
         // Re-find player in the new scene
-        m_player = GameObject.Find("Player");
         if (m_player != null)
             m_player.transform.position = spawnPosition;
 
@@ -106,6 +108,5 @@ public class CustomSceneManagerScript : MonoBehaviour
         if (ScreenFader.Instance != null)
             yield return ScreenFader.Instance.FadeTo(0f);
 
-        m_CR_LoadLevelRunning = null;
     }
 }

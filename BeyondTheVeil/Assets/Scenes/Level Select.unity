@@ -994,6 +994,7 @@ MonoBehaviour:
   grappleController: {fileID: 1757150614}
   maskController: {fileID: 193083900}
   m_jumpCounter: 1
+  m_CustomSceneManager: {fileID: 1960118415}
   m_MainCamera: {fileID: 519420031}
 --- !u!50 &196928987
 Rigidbody2D:
@@ -2824,6 +2825,9 @@ MonoBehaviour:
   m_sceneName: 
   m_currentCamera: {fileID: 0}
   m_level1SpawnPosition: {x: 0, y: 0, z: 0}
+  m_level2SpawnPosition: {x: 0, y: 0, z: 0}
+  m_level3SpawnPosition: {x: 0, y: 0, z: 0}
+  m_level4SpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1960118417
 Transform:
   m_ObjectHideFlags: 0
