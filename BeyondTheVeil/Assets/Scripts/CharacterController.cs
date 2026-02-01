@@ -286,8 +286,6 @@ public class CharacterController : MonoBehaviour
     {
         if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1 )
         {
-           
-            
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
             m_playerAnimation.SetBool("Jumping", true);
             m_playerAnimation.SetBool("Grounded", false);

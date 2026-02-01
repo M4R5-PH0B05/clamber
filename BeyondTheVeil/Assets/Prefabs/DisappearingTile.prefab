@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e6b5976fa0654b43aa865a51b800717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_activeSprite: {fileID: 0}
-  m_inactiveSprite: {fileID: 0}
-  m_disabledSprite: {fileID: 0}
+  m_activeSprite: {fileID: 853566990763331676, guid: a74c5c93008570f48b11514ed5a4ce56, type: 3}
+  m_inactiveSprite: {fileID: -1530944963, guid: a74c5c93008570f48b11514ed5a4ce56, type: 3}
+  m_disabledSprite: {fileID: -7983433689771700396, guid: a74c5c93008570f48b11514ed5a4ce56, type: 3}
   m_collisionsOnDefault: 0
 --- !u!212 &710606758384827292
 SpriteRenderer:
