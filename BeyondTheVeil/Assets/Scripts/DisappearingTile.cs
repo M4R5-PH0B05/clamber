@@ -44,12 +44,12 @@ public class DisappearingTile : MonoBehaviour
     /// <summary>
     /// The tile collider component
     /// </summary>
-    private Collider2D m_collider;
+    private BoxCollider2D m_collider;
 
     void Awake()
     {
         m_spriteRenderer = GetComponent<SpriteRenderer>();
-        m_collider = GetComponent<Collider2D>();
+        m_collider = GetComponent<BoxCollider2D>();
     }
 
     void Start()
