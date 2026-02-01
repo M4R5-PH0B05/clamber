@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Dynamic;
@@ -197,8 +198,29 @@ public class CharacterController : MonoBehaviour
         print("help");
         HandleDoorExits(collision);
         HandleMaskPickups(collision);
+        if (collision.gameObject.tag == "climbable" )
+        {
+            isclimbing = true;
+            
+
+        }
     }
-   
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "climbable")
+        {
+            isclimbing = false;
+            m_playerDirection.y = 0;
+            m_playerRB2D.gravityScale = 1;
+        }
+        if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
+        {
+            isclimbing = false;
+            m_playerDirection.y = 0;
+            m_playerRB2D.gravityScale = 1;
+
+        }
+    }
 
     /// <summary>
     /// On collision with an object if it is a mask stores and quips the appropriate mask
@@ -278,12 +300,15 @@ public class CharacterController : MonoBehaviour
     }
     public void HandleClimbing(InputAction.CallbackContext ctx)
     {
-        if (m_maskState == MaskState.climbingmask &&  isclimbing == true)
+        Debug.Log(isclimbing);
+        if (m_maskState == MaskState.climbingmask && isclimbing == true)
         {
             m_playerRB2D.AddForce(new Vector2(0,1), ForceMode2D.Impulse);
+            m_playerRB2D.gravityScale = 0;
         }
         else if (ctx.canceled)
-        { 
+        {
+            m_playerRB2D.gravityScale = 1;
             m_playerDirection.y = 0;
         }
         
@@ -296,7 +321,7 @@ public class CharacterController : MonoBehaviour
     /// <param name="ctx"></param>
     public void StartHandleJump(InputAction.CallbackContext ctx)
     {
-        if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1 )
+        if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1 && isclimbing != true)
         {
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
             m_playerAnimation.SetBool("Jumping", true);
@@ -348,11 +373,7 @@ public class CharacterController : MonoBehaviour
             {
                 m_jumpCounter = 1;
             }
-            if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
-            {
-                isclimbing = true;
-
-            }
+           
         }
     }
 
@@ -404,6 +425,7 @@ public class CharacterController : MonoBehaviour
         {
             m_timeSinceStuck += Time.deltaTime;
         }
+        
     }
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
@@ -449,7 +471,7 @@ public class CharacterController : MonoBehaviour
             m_maskState = MaskState.climbingmask;
             grappleController.m_maskState = MaskState.climbingmask;
             maskController.CurrentMask();
-            m_enableDisappearingTiles.Invoke();
+            m_disableDisappearingTiles.Invoke();
         }
         
     }

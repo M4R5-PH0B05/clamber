@@ -511,7 +511,7 @@
                     "name": "",
                     "id": "574077e8-94d8-4cf0-8650-655e4d7f52f9",
                     "path": "<Keyboard>/w",
-                    "interactions": "Hold",
+                    "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Climb",
