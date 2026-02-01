@@ -33,7 +33,9 @@ public class GrappleController : MonoBehaviour
         Debug.Log("Raycast");
         //takes the current mouse position from the current player position compared to the camera
         Vector2 grappleDirection = characterController.m_MainCamera.ScreenToWorldPoint(new Vector3(Mouse.current.position.ReadValue().x, Mouse.current.position.ReadValue().y, 0)) - this.transform.position;
+        print(grappleDirection);
         //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
         m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
+
     }
 }

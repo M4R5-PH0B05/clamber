@@ -133,7 +133,7 @@ public class CharacterController : MonoBehaviour
         m_layerMask = LayerMask.GetMask("Default");
         m_playerAnimation = GetComponent<Animator>();
 
-        m_MainCamera = GetComponent<Camera>();
+        
     }
 
     /// <summary>
@@ -156,6 +156,7 @@ public class CharacterController : MonoBehaviour
     {
         InitialiseDisappearingTileEvents();
         maskController.CurrentMask();
+        m_MainCamera = GetComponentInChildren<Camera>();
     }
 
     /// <summary>
@@ -179,7 +180,7 @@ public class CharacterController : MonoBehaviour
         //adds the move to position
         transform.position += new Vector3(m_playerDirection.x * m_moveSpeed, m_playerDirection.y * m_moveSpeed, 0);
         //Grapples to appropriate position while player grappling is true
-        if (grappleController.m_grappling == true)
+        if (grappleController.m_grappling == true && grappleController.m_grappleHit.distance != 0)
         {
             transform.position = Vector2.MoveTowards(transform.position, grappleController.m_grappleHit.point, 15f * Time.deltaTime);
         }

@@ -2520,7 +2520,7 @@ MonoBehaviour:
   m_grappleLayerMask:
     serializedVersion: 2
     m_Bits: 55
-  characterController: {fileID: 0}
+  characterController: {fileID: 196928986}
   m_grappling: 0
 --- !u!1 &1771239651
 GameObject:
