@@ -3,7 +3,7 @@ using UnityEngine;
 public class ScrollingCredits : MonoBehaviour
 {
     public RectTransform viewport;
-    public float speed = 120f;
+    public float speed = 60f;
 
     public float startPadding = 50f; // smaller = less gap at the start
     public float endPadding = 50f;
