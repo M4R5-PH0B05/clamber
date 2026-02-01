@@ -105,7 +105,7 @@ public class CharacterController : MonoBehaviour
     /// set true/false when climbing is true
     /// </summary>
     private bool isclimbing = false;
-    
+    [SerializeField] private GameObject m_CustomSceneManager;
    
    
 
@@ -120,6 +120,7 @@ public class CharacterController : MonoBehaviour
 
     void Awake()
     {
+        m_CustomSceneManager = GameObject.Find("CustomSceneManager");
         DontDestroyOnLoad(gameObject);
         //Initialising Inputs
         m_move = InputSystem.actions.FindAction("Move");
@@ -189,8 +190,7 @@ public class CharacterController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        HandleMaskPickups(collision);
-        
+        HandleDoorExits(collision);
     }
    
 
@@ -264,11 +264,10 @@ public class CharacterController : MonoBehaviour
     }
     public void HandleClimbing(InputAction.CallbackContext ctx)
     {
-        if (m_maskState == MaskState.climbingmask && !ctx.canceled && isclimbing == true)
+        if (m_maskState == MaskState.climbingmask &&  isclimbing == true)
         {
-            m_playerDirection.y = m_playerDirection.y + (850f * Time.deltaTime);
+            m_playerRB2D.AddForce(new Vector2(0,1), ForceMode2D.Impulse);
         }
-   
         else if (ctx.canceled)
         {
             m_playerDirection.y = 0;
@@ -342,20 +341,37 @@ public class CharacterController : MonoBehaviour
                 }
             }
         }
-        if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
-        {
-            isclimbing = true;
-
-        }
-
-
     }
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "climbable")
         {
             isclimbing = false;
-            m_playerDirection.y = m_playerDirection.y / 2;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
+        {
+            isclimbing = true;
+        }
+    }
+
+
+    private void HandleDoorExits(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Level1Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 2", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level2SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level2Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 3", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level3SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level3Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 4", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level4SpawnPosition);
         }
     }
 
