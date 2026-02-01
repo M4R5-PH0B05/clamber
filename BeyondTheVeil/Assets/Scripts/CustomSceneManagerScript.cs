@@ -77,6 +77,33 @@ public class CustomSceneManagerScript : MonoBehaviour
         }
     }
 
+    public void LoadLevel3()
+    {
+        if (m_CR_LoadLevelRunning == null)
+        {
+            m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Level 3", m_level1SpawnPosition));
+            StartCoroutine(screenFader.FadeOutCoroutine(1f));
+        }
+    }
+
+    public void LoadLevel4()
+    {
+        if (m_CR_LoadLevelRunning == null)
+        {
+            m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Level 4", m_level1SpawnPosition));
+            StartCoroutine(screenFader.FadeOutCoroutine(1f));
+        }
+    }
+
+    public void LoadCredits()
+    {
+        if (m_CR_LoadLevelRunning == null)
+        {
+            m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Credits", m_level1SpawnPosition));
+            StartCoroutine(screenFader.FadeOutCoroutine(1f));
+        }
+    }
+
     /// <summary>
     /// Async loads given scene while performing other functions during scene loading
     /// </summary>

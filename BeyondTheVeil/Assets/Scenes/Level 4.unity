@@ -754,6 +754,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DisappearingTile
       objectReference: {fileID: 0}
+    - target: {fileID: 1185803936556791111, guid: 35e6c9cf6178bf84fa020ea551a7cc2b, type: 3}
+      propertyPath: m_IncludeLayers.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 3851242113583083789, guid: 35e6c9cf6178bf84fa020ea551a7cc2b, type: 3}
       propertyPath: m_collisionsOnDefault
       value: 1
