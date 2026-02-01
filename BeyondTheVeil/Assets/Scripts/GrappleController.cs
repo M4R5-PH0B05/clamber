@@ -36,5 +36,6 @@ public class GrappleController : MonoBehaviour
         print(grappleDirection);
         //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
         m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
+
     }
 }
