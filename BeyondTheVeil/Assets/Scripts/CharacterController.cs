@@ -12,6 +12,10 @@ using static CharacterController;
 
 public class CharacterController : MonoBehaviour
 {
+    [SerializeField] private UnityEngine.UI.Image djumpmask;
+    [SerializeField] private UnityEngine.UI.Image grapplemask;
+    [SerializeField] private UnityEngine.UI.Image climbmask;
+    [SerializeField] private UnityEngine.UI.Image walltangibilitymask;
     /// <summary>
     /// This defines the player mask state
     /// </summary>
@@ -134,6 +138,10 @@ public class CharacterController : MonoBehaviour
 
         m_layerMask = LayerMask.GetMask("Default");
         m_playerAnimation = GetComponent<Animator>();
+        djumpmask.fillAmount = 0;
+        grapplemask.fillAmount = 0;
+        climbmask.fillAmount = 0;
+        walltangibilitymask.fillAmount = 0;
 
         
     }
@@ -235,6 +243,7 @@ public class CharacterController : MonoBehaviour
             m_maskState = MaskState.doubleJump;
             doubleJumpCollected = true;
             Destroy(collision.gameObject);
+            displaydjumpmask();
         }
         else if (collision.gameObject.tag == "wallTangibilityMask")
         {
@@ -243,6 +252,7 @@ public class CharacterController : MonoBehaviour
             m_maskState = MaskState.wallTangibility;
             wallTangibilityCollected = true;
             Destroy(collision.gameObject);
+            displaywalltangibilitymask();
         }
         else if (collision.gameObject.tag == "grappleMask")
         {
@@ -251,6 +261,7 @@ public class CharacterController : MonoBehaviour
             m_maskState = MaskState.grapple;
             grappleCollected = true;
             Destroy(collision.gameObject);
+            displaygrapplemask();
         }
         else if (collision.gameObject.tag == "climbMask")
         {
@@ -259,6 +270,7 @@ public class CharacterController : MonoBehaviour
             m_maskState = MaskState.climbingmask;
             climbingmaskCollected = true;
             Destroy(collision.gameObject);
+            displayclimbmask();
         }
     }
 
@@ -497,5 +509,21 @@ public class CharacterController : MonoBehaviour
     IEnumerator CR_WaitForJumpAmim()
     {
         yield return new WaitForSeconds(0.5f);
+    }
+    public void displaydjumpmask()
+    {
+        djumpmask.fillAmount = 1f;
+    }
+    public void displaygrapplemask()
+    {
+        grapplemask.fillAmount = 1f;
+    }
+    public void displayclimbmask()
+    {
+        climbmask.fillAmount = 1f;
+    }
+    public void displaywalltangibilitymask()
+    {
+        walltangibilitymask.fillAmount = 1f;
     }
 }
