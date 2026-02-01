@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewport: {fileID: 19869025}
-  speed: 120
+  speed: 100
   startPadding: 0
   endPadding: 50
 --- !u!1 &1303664935
