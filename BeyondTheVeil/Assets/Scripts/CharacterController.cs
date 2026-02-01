@@ -105,9 +105,9 @@ public class CharacterController : MonoBehaviour
     /// set true/false when climbing is true
     /// </summary>
     private bool isclimbing = false;
-    
-   
-   
+    private float m_timeSinceStuck;
+
+
 
     [SerializeField] public Camera m_MainCamera;
 
@@ -202,24 +202,32 @@ public class CharacterController : MonoBehaviour
     {
         if (collision.gameObject.tag == "doubleJumpMask")
         {
+            maskController.CurrentMask();
+            grappleController.m_maskState = MaskState.doubleJump;
             m_maskState = MaskState.doubleJump;
             doubleJumpCollected = true;
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "wallTangibilityMask")
         {
+            maskController.CurrentMask();
+            grappleController.m_maskState = MaskState.doubleJump;
             m_maskState = MaskState.wallTangibility;
             wallTangibilityCollected = true;
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "grappleMask")
         {
+            maskController.CurrentMask();
+            grappleController.m_maskState = MaskState.doubleJump;
             m_maskState = MaskState.grapple;
             grappleCollected = true;
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "climbMask")
         {
+            maskController.CurrentMask();
+            grappleController.m_maskState = MaskState.doubleJump;
             m_maskState = MaskState.climbingmask;
             climbingmaskCollected = true;
             Destroy(collision.gameObject);
@@ -259,7 +267,7 @@ public class CharacterController : MonoBehaviour
             m_playerAnimation.SetBool("Idle", true);
             
 
-        }
+        }  
      
     }
     public void HandleClimbing(InputAction.CallbackContext ctx)
@@ -270,7 +278,7 @@ public class CharacterController : MonoBehaviour
         }
    
         else if (ctx.canceled)
-        {
+        { 
             m_playerDirection.y = 0;
         }
         
@@ -285,8 +293,6 @@ public class CharacterController : MonoBehaviour
     {
         if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1 )
         {
-           
-            
             Cr_HandleJumpInstance = StartCoroutine(CR_HandleJump(ctx));
             m_playerAnimation.SetBool("Jumping", true);
             m_playerAnimation.SetBool("Grounded", false);
@@ -309,7 +315,7 @@ public class CharacterController : MonoBehaviour
     /// <returns></returns>
     IEnumerator CR_HandleJump(InputAction.CallbackContext ctx)
     {
-        Coroutine CR_WaitForJumpAnimInstance = StartCoroutine(CR_WaitForJumpAmim());
+        //Coroutine CR_WaitForJumpAnimInstance = StartCoroutine(CR_WaitForJumpAmim());
         while (m_currentJumpCooldown < m_jumpCooldownTime)
         {
             m_currentJumpCooldown += Time.deltaTime;
@@ -321,41 +327,49 @@ public class CharacterController : MonoBehaviour
         Cr_HandleJumpInstance = null;
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        //for every object the player is colliding with, if it is the ground reset jump counter
-        foreach (ContactPoint2D contact in collision.contacts)
+        if (collision.GetContact(0).point.y < transform.position.y)
         {
-            if (contact.normal.y > 0)//if the player collides with the ground from above resets jumps appropriately
-            {
-              
-                m_playerAnimation.SetBool("Jumping", false);
-                m_playerAnimation.SetBool("Grounded", true);
 
-                if (m_maskState == MaskState.doubleJump && doubleJumpCollected)
-                {
-                    m_jumpCounter = 2;
-                }
-                else
-                {
-                    m_jumpCounter = 1;
-                }
+            m_playerAnimation.SetBool("Jumping", false);
+            m_playerAnimation.SetBool("Grounded", true);
+
+            if (m_maskState == MaskState.doubleJump && doubleJumpCollected)
+            {
+                m_jumpCounter = 2;
+            }
+            else //the double jump when only 1 jump is being set here after leaving ground
+            {
+                m_jumpCounter = 1;
+            }
+            if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
+            {
+                isclimbing = true;
+
             }
         }
-        if (collision.gameObject.tag == "climbable" && m_maskState == MaskState.climbingmask)
-        {
-            isclimbing = true;
-
-        }
-
-
     }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.GetContact(0).point.y < transform.position.y && m_jumpCounter == 0 && m_timeSinceStuck > 0.1f)
+        {
+            transform.position += new Vector3(0,1,0);
+            m_timeSinceStuck = 0;
+        }
+    }
+
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "climbable")
         {
             isclimbing = false;
             m_playerDirection.y = m_playerDirection.y / 2;
+        }
+        if (collision.GetContact(0).point.y < transform.position.y && m_jumpCounter == 0)
+        {
+            m_timeSinceStuck += Time.deltaTime;
         }
     }
 
@@ -374,6 +388,7 @@ public class CharacterController : MonoBehaviour
     {
         if (grappleCollected)
         {
+            m_jumpCounter = 1;
             m_maskState = MaskState.grapple;
             Debug.Log("Grapple Selected");
             grappleController.m_maskState = MaskState.grapple;
@@ -386,6 +401,7 @@ public class CharacterController : MonoBehaviour
     {
         if (wallTangibilityCollected)
         {
+            m_jumpCounter = 1;
             m_maskState = MaskState.wallTangibility;
             grappleController.m_maskState = MaskState.wallTangibility;
             maskController.CurrentMask();
@@ -396,6 +412,7 @@ public class CharacterController : MonoBehaviour
     {
         if (climbingmaskCollected)
         {
+            m_jumpCounter = 1;
             m_maskState = MaskState.climbingmask;
             grappleController.m_maskState = MaskState.climbingmask;
             maskController.CurrentMask();
