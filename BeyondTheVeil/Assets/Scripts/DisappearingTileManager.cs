@@ -5,7 +5,7 @@ public class DisappearingTileManager : MonoBehaviour
 {
     private DisappearingTile[] m_disappearingTiles;
 
-    void Awake()
+    void Update()
     {
         //initialising disappearing tiles in the scene
         GameObject[] tileObjects = GameObject.FindGameObjectsWithTag("DisappearingTile");
