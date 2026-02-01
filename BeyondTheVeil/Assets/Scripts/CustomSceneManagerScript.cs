@@ -98,8 +98,8 @@ public class CustomSceneManagerScript : MonoBehaviour
         while (!asyncLoad.isDone)
             yield return null;
 
+        m_CR_LoadLevelRunning = null;
         // Re-find player in the new scene
-        m_player = GameObject.Find("Player");
         if (m_player != null)
             m_player.transform.position = spawnPosition;
 
@@ -108,6 +108,5 @@ public class CustomSceneManagerScript : MonoBehaviour
         if (ScreenFader.Instance != null)
             yield return ScreenFader.Instance.FadeTo(0f);
 
-        m_CR_LoadLevelRunning = null;
     }
 }
