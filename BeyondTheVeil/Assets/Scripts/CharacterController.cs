@@ -107,7 +107,7 @@ public class CharacterController : MonoBehaviour
     private bool isclimbing = false;
     private float m_timeSinceStuck;
 
-
+    private GameObject m_CustomSceneManager;
 
     [SerializeField] public Camera m_MainCamera;
 
