@@ -360,6 +360,21 @@ public class CharacterController : MonoBehaviour
             m_timeSinceStuck = 0;
         }
     }
+    private void HandleDoorExits(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Level1Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 2", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level2SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level2Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 3", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level3SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level3Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 4", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level4SpawnPosition);
+        }
+    }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
