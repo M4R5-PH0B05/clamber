@@ -23,6 +23,11 @@ public class CharacterController : MonoBehaviour
         climbingmask = 4,
     }
 
+    private bool doubleJumpCollected;
+    private bool grappleCollected;
+    private bool wallTangibilityCollected;
+    private bool climbingmaskCollected;
+        
     /// <summary>
     /// The player direction
     /// </summary>
@@ -95,12 +100,7 @@ public class CharacterController : MonoBehaviour
 
     private Coroutine Cr_HandleJumpInstance;
 
-    /// <summary>
-    /// bools for if each mask has been collected.
-    /// </summary>
-    private bool grappleMaskEquipped = false;
-    private bool wallTangibilityMaskEquipped = false;
-    private bool doubleJumpMaskEquipped = false;
+  
     /// <summary>
     /// set true/false when climbing is true
     /// </summary>
@@ -155,6 +155,7 @@ public class CharacterController : MonoBehaviour
     void Start()
     {
         InitialiseDisappearingTileEvents();
+        maskController.CurrentMask();
     }
 
     /// <summary>
@@ -201,21 +202,25 @@ public class CharacterController : MonoBehaviour
         if (collision.gameObject.tag == "doubleJumpMask")
         {
             m_maskState = MaskState.doubleJump;
+            doubleJumpCollected = true;
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "wallTangibilityMask")
         {
             m_maskState = MaskState.wallTangibility;
+            wallTangibilityCollected = true;
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "grappleMask")
         {
             m_maskState = MaskState.grapple;
+            grappleCollected = true;
             Destroy(collision.gameObject);
         }
         else if (collision.gameObject.tag == "climbMask")
         {
             m_maskState = MaskState.climbingmask;
+            climbingmaskCollected = true;
             Destroy(collision.gameObject);
         }
     }
@@ -277,7 +282,7 @@ public class CharacterController : MonoBehaviour
     /// <param name="ctx"></param>
     public void StartHandleJump(InputAction.CallbackContext ctx)
     {
-        if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1)
+        if (Cr_HandleJumpInstance == null && m_jumpCounter >= 1 )
         {
            
             
@@ -326,11 +331,11 @@ public class CharacterController : MonoBehaviour
                 m_playerAnimation.SetBool("Jumping", false);
                 m_playerAnimation.SetBool("Grounded", true);
 
-                if (m_maskState == MaskState.doubleJump)
+                if (m_maskState == MaskState.doubleJump && doubleJumpCollected)
                 {
                     m_jumpCounter = 2;
                 }
-                else if (m_maskState != MaskState.doubleJump)
+                else
                 {
                     m_jumpCounter = 1;
                 }
@@ -355,34 +360,46 @@ public class CharacterController : MonoBehaviour
 
     public void HandleMaskSwitchDJump(InputAction.CallbackContext ctx)
     {
-        m_maskState = MaskState.doubleJump;
-        grappleController.m_maskState = MaskState.doubleJump;
-        maskController.CurrentMask();
-        m_disableDisappearingTiles.Invoke();
+        if (doubleJumpCollected)
+        {
+            m_maskState = MaskState.doubleJump;
+            grappleController.m_maskState = MaskState.doubleJump;
+            maskController.CurrentMask();
+            m_disableDisappearingTiles.Invoke();
+        }
     }
 
     public void HandleMaskSwitchGrapple(InputAction.CallbackContext ctx)
     {
-        m_maskState = MaskState.grapple;
-        Debug.Log("Grapple Selected");
-        grappleController.m_maskState = MaskState.grapple;
-        maskController.CurrentMask();
-        m_disableDisappearingTiles.Invoke();
+        if (grappleCollected)
+        {
+            m_maskState = MaskState.grapple;
+            Debug.Log("Grapple Selected");
+            grappleController.m_maskState = MaskState.grapple;
+            maskController.CurrentMask();
+            m_disableDisappearingTiles.Invoke();
+        }
     }
 
     public void HandleMaskSwitchWall(InputAction.CallbackContext ctx)
     {
+        if (wallTangibilityCollected)
+        {
             m_maskState = MaskState.wallTangibility;
             grappleController.m_maskState = MaskState.wallTangibility;
-        maskController.CurrentMask();
-        m_enableDisappearingTiles.Invoke();
+            maskController.CurrentMask();
+            m_enableDisappearingTiles.Invoke();
+        }
     }
     public void HandleMaskClimbing(InputAction.CallbackContext ctx)
     {
-        m_maskState = MaskState.climbingmask;
-        grappleController.m_maskState = MaskState.climbingmask;
-        maskController.CurrentMask();
-        m_enableDisappearingTiles.Invoke();
+        if (climbingmaskCollected)
+        {
+            m_maskState = MaskState.climbingmask;
+            grappleController.m_maskState = MaskState.climbingmask;
+            maskController.CurrentMask();
+            m_enableDisappearingTiles.Invoke();
+        }
         
     }
 
