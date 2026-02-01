@@ -185,6 +185,10 @@ public class CharacterController : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, grappleController.m_grappleHit.point, 15f * Time.deltaTime);
         }
+        else if (grappleController.m_grappling == false || grappleController.m_grappleHit.distance == 0)
+        {
+            grappleController.SetActiveFalse();
+        }
         
     }
 
@@ -358,6 +362,27 @@ public class CharacterController : MonoBehaviour
         {
             transform.position += new Vector3(0,1,0);
             m_timeSinceStuck = 0;
+        }
+    }
+    private void HandleDoorExits(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Level1Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 2", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level2SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level2Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 3", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level3SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level3Exit")
+        {
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Level 4", m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().m_level4SpawnPosition);
+        }
+        else if (collision.gameObject.name == "Level4Exit")
+        {
+            Destroy(gameObject);
+            m_CustomSceneManager.GetComponent<CustomSceneManagerScript>().StartSwapSceneCoroutine("Credits", new Vector3(0,0,0));
+            
         }
     }
 

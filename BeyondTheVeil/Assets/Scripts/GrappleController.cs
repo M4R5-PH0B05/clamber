@@ -13,8 +13,10 @@ public class GrappleController : MonoBehaviour
     public RaycastHit2D m_grappleHit;
     public bool m_grappling = false;
 
-   
-
+    [SerializeField] private GrappleLineRenderer grappleLineRenderer;
+    [SerializeField] private Transform grappleOrigin;
+    [SerializeField] private float maxDistance = 50f;
+    [SerializeField] private LayerMask grappleMask;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -36,6 +38,17 @@ public class GrappleController : MonoBehaviour
         print(grappleDirection);
         //casts the acctual ray to whereever the mouse is on screen, ignores the player to stop bugs
         m_grappleHit = Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask);
+        if (Physics2D.Raycast(this.transform.position, grappleDirection, 10, m_grappleLayerMask))
+        {
+            grappleLineRenderer.SetActive(true);
+            grappleLineRenderer.SetEndPoint(m_grappleHit.point);
+        }
 
+
+    }
+
+    public void SetActiveFalse()
+    {
+        grappleLineRenderer.SetActive(false);
     }
 }
