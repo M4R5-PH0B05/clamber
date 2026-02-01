@@ -4,72 +4,46 @@ using UnityEngine.UI;
 
 public class ScreenFader : MonoBehaviour
 {
-    public static ScreenFader Instance;
+    private Image FadeImage;
 
-    [SerializeField] private Image fadeImage;
-    [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] public float fadeTime = 0.6f;
-
-    void Awake()
+    private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(transform.root.gameObject);
-            return;
-        }
-        Instance = this;
-
-        DontDestroyOnLoad(transform.root.gameObject);
-
-        if (!fadeImage) fadeImage = GetComponent<Image>();
-        if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
+        FadeImage = GetComponent<Image>();
     }
 
-    void Start()
+    public IEnumerator FadeInCoroutine(float duration)
     {
-        SetAlpha(1f);
-        SetBlocking(true);
-        StartCoroutine(FadeTo(0f));
+        Color startColour = new Color(FadeImage.color.r, FadeImage.color.g, FadeImage.color.b, 1);
+        Color endColour = new Color(FadeImage.color.r, FadeImage.color.g, FadeImage.color.b, 0);
+
+        yield return FadeCoroutine(startColour, endColour, duration);
+
+        gameObject.SetActive(false);
     }
 
-    public IEnumerator FadeTo(float targetAlpha)
+    public IEnumerator FadeOutCoroutine(float duration)
     {
-        SetBlocking(true);
+        Color startColour = new Color(FadeImage.color.r, FadeImage.color.g, FadeImage.color.b, 0);
+        Color endColour = new Color(FadeImage.color.r, FadeImage.color.g, FadeImage.color.b, 1);
 
-        float startAlpha = fadeImage.color.a;
-        float t = 0f;
+        gameObject.SetActive(true);
+        yield return FadeCoroutine(startColour, endColour, duration);       
+    }
 
-        while (t < fadeTime)
+    private IEnumerator FadeCoroutine(Color startColour, Color endColour, float duration)
+    {
+        float elapsedTime = 0;
+        float elapsedPercentage = 0;
+
+        while (elapsedPercentage < 1)
         {
-            t += Time.unscaledDeltaTime; // works even if timeScale = 0
-            float a = Mathf.Lerp(startAlpha, targetAlpha, t / fadeTime);
-            SetAlpha(a);
+            elapsedPercentage = elapsedTime /duration;
+            FadeImage.color = Color.Lerp(startColour, endColour, elapsedPercentage);
+
             yield return null;
-        }
-
-        SetAlpha(targetAlpha);
-
-        if (targetAlpha <= 0.001f)
-            SetBlocking(false);
-    }
-
-    void SetBlocking(bool block)
-    {
-        if (canvasGroup)
-        {
-            canvasGroup.blocksRaycasts = block;
-            canvasGroup.interactable = block;
-        }
-        else if (fadeImage)
-        {
-            fadeImage.raycastTarget = block;
+            elapsedTime += Time.deltaTime;
         }
     }
 
-    void SetAlpha(float a)
-    {
-        var c = fadeImage.color;
-        c.a = a;
-        fadeImage.color = c;
-    }
+
 }

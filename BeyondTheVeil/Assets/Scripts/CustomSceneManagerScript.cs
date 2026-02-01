@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class CustomSceneManagerScript : MonoBehaviour
 {
     [SerializeField] private GameObject m_player;
+    [SerializeField] private ScreenFader screenFader;
     public string m_sceneName;
     public Camera m_currentCamera;
     public Vector3 m_level1SpawnPosition = new Vector3(0,0,0);
@@ -61,6 +62,9 @@ public class CustomSceneManagerScript : MonoBehaviour
         if (m_CR_LoadLevelRunning == null)
         {
             m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Level 1", m_level1SpawnPosition));
+            Debug.Log("Fading");
+            StartCoroutine(screenFader.FadeOutCoroutine(1f));
+            Debug.Log("Faded");
         }
     }
 
@@ -69,6 +73,7 @@ public class CustomSceneManagerScript : MonoBehaviour
         if (m_CR_LoadLevelRunning == null)
         {
             m_CR_LoadLevelRunning = StartCoroutine(CR_LoadScene("Level 2", m_level1SpawnPosition));
+            StartCoroutine(screenFader.FadeOutCoroutine(1f));
         }
     }
 
@@ -87,7 +92,7 @@ public class CustomSceneManagerScript : MonoBehaviour
         { 
             SceneMusic titleMusic = GameObject.Find("TitleMusic").GetComponent<SceneMusic>(); 
             // Check music is playing
-            Debug.Log("Fading");
+            
             // Fade it out 
             titleMusic.FadeOut();
             // Wait before loading new scene 
@@ -105,8 +110,7 @@ public class CustomSceneManagerScript : MonoBehaviour
 
         CheckIfPlayerShouldBeActive();
 
-        if (ScreenFader.Instance != null)
-            yield return ScreenFader.Instance.FadeTo(0f);
+        
 
     }
 }
