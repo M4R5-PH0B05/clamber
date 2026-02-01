@@ -36,7 +36,7 @@ ScriptedImporter:
     spriteMeshType: 1
     alignment: 0
     spritePivot: {x: 0.5, y: 0.5}
-    spritePixelsToUnits: 100
+    spritePixelsToUnits: 32
     spriteBorder: {x: 0, y: 0, z: 0, w: 0}
     spriteGenerateFallbackPhysicsShape: 0
     generateCubemap: 6
@@ -151,8 +151,8 @@ ScriptedImporter:
   spriteSheetImportData:
   - name: MONKEY_0
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -172,8 +172,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: MONKEY_1
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -193,8 +193,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: MONKEY_2
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -214,8 +214,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: MONKEY_3
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -235,8 +235,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: MONKEY_4
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -256,8 +256,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: MONKEY_5
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
@@ -277,8 +277,8 @@ ScriptedImporter:
     uvTransform: {x: 0, y: 0}
   - name: MONKEY_6
     originalName: 
-    pivot: {x: 0, y: 0}
-    alignment: 0
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:

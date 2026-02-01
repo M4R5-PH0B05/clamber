@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f3690215549171b4ea031ef37062027a
+guid: aaef47fbd4f96ec428ed48b2128fd875
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 397398693828604319
-    second: Vined Wall Tiles_0
+      213: -953603091597171540
+    second: Background tiles_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Vined Wall Tiles_0
+      name: Background tiles_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 64
-        width: 32
-        height: 32
+        y: 0
+        width: 768
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,52 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f91bbdba108d38500800000000000000
-      internalID: 397398693828604319
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Vined Wall Tiles_1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e1368c7e50727714f82a1c96409c8bf0
-      internalID: -638327156
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Vined Wall Tiles_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5ac92b1480ad7d74c88352a1d9cb2615
-      internalID: -1569019368
+      spriteID: ca4e2a46a0f14c2f0800000000000000
+      internalID: -953603091597171540
       vertices: []
       indices: 
       edges: []
@@ -195,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: ac561f4d9b08ea4428503006b4d5ae5d
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -203,13 +159,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":3.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Vined Wall Tiles_0: 397398693828604319
-      Vined Wall Tiles_1: -638327156
-      Vined Wall Tiles_2: -1569019368
+      Background tiles_0: -953603091597171540
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
