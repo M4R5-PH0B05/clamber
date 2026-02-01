@@ -2826,7 +2826,7 @@ MonoBehaviour:
   m_currentCamera: {fileID: 0}
   m_level1SpawnPosition: {x: 0, y: 0, z: 0}
   m_level2SpawnPosition: {x: 0, y: 0, z: 0}
-  m_level3SpawnPosition: {x: 0, y: 0, z: 0}
+  m_level3SpawnPosition: {x: 3, y: 3, z: 0}
   m_level4SpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1960118417
 Transform:
